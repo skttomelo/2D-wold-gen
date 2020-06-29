@@ -1,9 +1,9 @@
 use piston_window::{rectangle, Context, G2d};
 use piston_window::types::Color;
 
-const BLOCK_SIZE: f64 = 25.0;
-pub const WHITE: Color = [1.0,1.0,1.0,1.0];
-pub const BLACK: Color = [0.0,0.0,0.0,1.0];
+const BLOCK_SIZE: f64 = 20.0;
+pub const WALL: Color = [36.0/256.0,79.0/256.0,137.0/256.0,1.0];
+pub const BACKGROUND_WALL: Color = [19.0/256.0,54.0/256.0,101.0/256.0,1.0];
 
 // takes integer coord and multiplies it by the block size to make the upscaled coord location
 // after that it returns the value as a 64-bit float

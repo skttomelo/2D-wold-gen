@@ -1,19 +1,27 @@
 use piston_window;
 use piston_window::*;
-// use std::time::SystemTime;
-//  SeedableRng, rngs::StdRng,
-use rand::{Rng, rngs::ThreadRng};
+use std::time::SystemTime;
+use rand::{Rng, SeedableRng, rngs::StdRng};
 
 mod draw;
 
 // create map with basic rng
-fn gen_map(width: u32, height: u32, rng: &mut ThreadRng) -> Vec<Vec<u8>>{
+fn gen_map(width: u32, height: u32, rng: &mut StdRng) -> Vec<Vec<u8>>{
     let mut map = vec![vec![0u8; width as usize]; height as usize];
     for y in 0..height {
         for x in 0..width {
+
+            // let gen_val = rng.gen_range(0,100);
+            // if gen_val < 40 {
+            //     map[y as usize][x as usize] = 1;
+            // }else if gen_val < 60 {
+            //     map[y as usize][x as usize] = 2;
+            // }else {
+            //     map[y as usize][x as usize] = 0;
+            // }
             match rng.gen_bool(0.4){
-                true => map[x as usize][y as usize] = 1,
-                _ => map[x as usize][y as usize] = 0
+                true => map[y as usize][x as usize] = 1,
+                _ => map[y as usize][x as usize] = 0
             }
         }
     }
@@ -32,7 +40,7 @@ fn get_wall_count(grid_x: i32, grid_y: i32, map: &Vec<Vec<u8>>) -> u32 {
                 continue;
             }
             if x < width as i32 && x >= 0 && y >= 0 && y < height as i32 {
-                wall_count += map[x as usize][y as usize] as u32;
+                wall_count += map[y as usize][x as usize] as u32;
             }else{
                 wall_count += 1
             }
@@ -49,7 +57,7 @@ fn deep_clone_2d(map: &Vec<Vec<u8>>) -> Vec<Vec<u8>> {
     let mut clone = vec![vec![0u8; width as usize]; height as usize];
     for (y, row) in map.iter().enumerate() {
         for (x,col) in row.iter().enumerate() {
-            clone[x][y] = *col as u8;
+            clone[y][x] = *col as u8;
         }
     }
 
@@ -76,19 +84,18 @@ fn main() {
     let (width, height) = (30,30);
 
     // set seed
-    // let seed;
-    // match SystemTime::now().duration_since(SystemTime::UNIX_EPOCH){
-    //     Ok(n) => seed = n.as_secs() as u64,
-    //     Err(_) => panic!("SystemTime before unix epoch"),
-    // }
-    // let mut r = StdRng::seed_from_u64(seed);
-    let mut r = rand::thread_rng();
+    let seed;
+    match SystemTime::now().duration_since(SystemTime::UNIX_EPOCH){
+        Ok(n) => seed = n.as_secs() as u64,
+        Err(_) => panic!("SystemTime before unix epoch"),
+    }
+    let mut r = StdRng::seed_from_u64(seed);
 
     let mut map = gen_map(width, height, &mut r);
     
     // multiple iterations of smoothing
     // kinda like erosion lol
-    for i in 0..2 {
+    for _ in 0..2 {
         smooth_map(&mut map);
     }
 
@@ -107,11 +114,14 @@ fn main() {
     while let Some(event) = window.next(){
         window.draw_2d(&event, |c, g, _|{
             clear([0.0,0.0,0.0,1.0], g);
+
             for y in 0..height {
                 for x in 0..width {
-                    match &map[x as usize][y as usize]{
-                        1 => draw::draw_block(x as i32, y as i32, draw::WHITE, &c, g),
-                        _ => draw::draw_block(x as i32, y as i32, draw::BLACK, &c, g)
+                    match &map[y as usize][x as usize]{
+                        1 => draw::draw_block(x as i32, y as i32, draw::BACKGROUND_WALL, &c, g),
+                        2 => draw::draw_block(x as i32, y as i32, [1.0,0.0,0.0,1.0], &c, g),
+                        _ => draw::draw_block(x as i32, y as i32, draw::WALL, &c, g)
+                        // _ => continue
                     }
                 }
             }

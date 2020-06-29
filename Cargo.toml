@@ -1,5 +1,5 @@
 [package]
-name = "2D-world-gen"
+name = "2d-world-gen"
 version = "0.1.0"
 authors = ["Trevor"]
 edition = "2018"
@@ -8,4 +8,4 @@ edition = "2018"
 
 [dependencies]
 piston_window = "0.109.0"
-rand = "0.7.3"
+rand = "0.7"
