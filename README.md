@@ -1,5 +1,5 @@
 # 2D wold gen
- My Senior Project for Fall 2020
+ My Senior Project for Fall 2020 (Discontinued... new senior project deals with networking)
 # The Goal:
 - Leverage the use of perlin noise and cellular automata to generate earth like terrain from a side-scroller view
 # Current State:
